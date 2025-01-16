@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>reflected dom xss lab</title>
+</head>
+<body>
+    <!-- https://www.youtube.com/watch?v=bg_xH4Dp-6E&t=8s !-->
+
+    <h1> eval misuse - dom reflected xss</h1>
+    <p id="page"></p>
+    <p id="myObj"></p>
+    
+</body>
+
+<script>
+    var xmlhttp = new XMLHttpRequest();
+    var url = 'http://localhost:8000/data.json';
+
+    xmlhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            console.log('this.response = '+this.response);
+            console.log(typeof this.response);
+            eval('let myObj = ' +this.response);
+
+            document.getElementById('page').innerText = myObj.information;
+            
+            
+        }
+    }
+
+    // run with php -S 8000 or python3 -m http.server -d $(pwd) 8000
+
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+</script>
+</html>
